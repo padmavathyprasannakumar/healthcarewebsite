@@ -1,0 +1,26 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+{% block title %}Share Your Experience{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'hospital/css/form.css' %}">{% endblock %}
+
+{% block content %}
+<section class="form-section testimonial-form-section">
+    <div class="form-card wide">
+        <h1>Share Your Experience</h1>
+        <p class="subtitle">Tell us about your care journey. Submitted testimonials are reviewed by the admin before showing on the home page.</p>
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="field-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
+                {% for error in field.errors %}<small class="error">{{ error }}</small>{% endfor %}
+            </div>
+            {% endfor %}
+            {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors }}</div>{% endif %}
+            <button type="submit" class="green-btn">Submit Testimonial</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

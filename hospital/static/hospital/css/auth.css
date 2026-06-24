@@ -1,0 +1,46 @@
+.auth-section {
+    padding: 0 20px 5px;
+    display: flex;
+    justify-content: center;
+    background: #fff
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 18px rgba(0, 0, 0, .08);
+    padding: 34px 34px 45px
+}
+
+.auth-card h1 {
+    text-align: center;
+    font-size: 38px;
+    margin: 0 0 30px
+}
+
+.auth-card p {
+    text-align: left;
+    font-size: 18px
+}
+
+.auth-card a {
+    color: #1976d2;
+    text-decoration: underline;
+    font-weight: 700
+}
+
+.register-card {
+    max-width: 720px
+}
+
+.blue-btn {
+    margin-top: 5px
+}
+
+.field-group input {
+    font-size: 18px;
+    padding: 15px
+}

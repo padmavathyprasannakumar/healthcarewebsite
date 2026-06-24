@@ -1,0 +1,81 @@
+.prescription-layout {
+    align-items: flex-start
+}
+
+.form-help {
+    color: #666;
+    margin-top: -6px;
+    margin-bottom: 22px;
+    line-height: 1.5
+}
+
+.prescription-form-card {
+    min-width: 0
+}
+
+.prescription-list-card {
+    min-width: 0
+}
+
+.prescription-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 16px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .05)
+}
+
+.prescription-main strong {
+    font-size: 18px;
+    color: #111827
+}
+
+.prescription-main p {
+    margin: 6px 0;
+    color: #555
+}
+
+.prescription-main small {
+    color: #eff2f7;
+    display: block;
+    line-height: 1.5
+}
+
+.prescription-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px
+}
+
+.download-btn,
+.file-btn {
+    display: inline-block;
+    border-radius: 6px;
+    padding: 10px 13px;
+    font-weight: 700;
+    font-size: 14px
+}
+
+.download-btn {
+    background: #4ecb7c;
+    color: #fff
+}
+
+.file-btn {
+    border: 1px solid #1976d2;
+    color: #1976d2;
+    background: #fff
+}
+
+@media(max-width:900px) {
+    .prescription-actions {
+        flex-direction: column
+    }
+
+    .download-btn,
+    .file-btn {
+        text-align: center
+    }
+}

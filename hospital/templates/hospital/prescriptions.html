@@ -1,0 +1,50 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+{% block title %}Prescriptions{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'hospital/css/form.css' %}">
+<link rel="stylesheet" href="{% static 'hospital/css/prescription.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="form-section two-column prescription-layout">
+    <div class="form-card prescription-form-card">
+        <h1>Upload / Create Prescription</h1>
+        <p class="form-help">The downloaded prescription will automatically include the selected doctor name, mobile number, degree and specialist field.</p>
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="field-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
+                {% for error in field.errors %}<small class="error">{{ error }}</small>{% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="green-btn">Save Prescription</button>
+        </form>
+    </div>
+    <div class="form-card prescription-list-card">
+        <h1>My Prescriptions</h1>
+        {% for prescription in prescriptions %}
+        <div class="prescription-item">
+            <div class="prescription-main">
+                <strong>{{ prescription.title }}</strong>
+                <p>{{ prescription.created_at|date:'d M Y' }} {% if prescription.doctor %} - {{ prescription.doctor.name }}{% endif %}</p>
+                {% if prescription.doctor %}
+                    <small>{{ prescription.doctor.degree }} | {{ prescription.doctor.speciality.name }} | {{ prescription.doctor.phone|default:'No phone' }}</small>
+                {% endif %}
+            </div>
+            <div class="prescription-actions">
+                <a class="download-btn" href="{% url 'download_prescription' prescription.id %}">Download Styled Prescription</a>
+                {% if prescription.file %}
+                    <a class="file-btn" href="{{ prescription.file.url }}" download>Download Uploaded File</a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p>No prescription saved yet.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

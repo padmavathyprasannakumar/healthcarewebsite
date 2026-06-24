@@ -1,0 +1,52 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+{% block title %}Specialists{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'hospital/css/specialists.css' %}">{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <h1>Find a Specialist</h1>
+    <p>Search by doctor name, speciality, designation or degree.</p>
+</section>
+
+<form class="search-bar" method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search Doctor">
+    <select name="speciality">
+        <option value="">All Specialities</option>
+        {% for speciality in specialities %}
+            <option value="{{ speciality.id }}" {% if selected_speciality == speciality.id|stringformat:'s' %}selected{% endif %}>{{ speciality.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+<section class="doctor-list">
+    {% for doctor in doctors %}
+    <article class="doctor-row">
+        <div class="doctor-img">
+            {% if doctor.profile_image %}<img src="{{ doctor.profile_image.url }}" alt="{{ doctor.name }}">{% else %}<div class="doctor-photo-fallback">Doctor</div>{% endif %}
+        </div>
+        <div class="doctor-info">
+            <h2>{{ doctor.name }}</h2>
+            <strong>{{ doctor.speciality.name }}</strong>
+            <p>{{ doctor.degree }}</p>
+            {% if doctor.designation %}<p>{{ doctor.designation }}</p>{% endif %}
+            {% if doctor.room_no %}<p class="muted">Room: {{ doctor.room_no }}</p>{% endif %}
+        </div>
+        <div class="doctor-actions">
+            {% if doctor.phone %}
+            <a href="tel:{{ doctor.phone }}" class="call-link" title="Call {{ doctor.name }}">
+                <span class="call-icon">☎</span>
+                <span>CALL</span>
+            </a>
+            {% endif %}
+            <a href="{{ doctor.get_absolute_url }}" class="details-btn">View Details</a>
+            <a href="{% url 'doctor_appointment' doctor.id %}" class="appointment-btn"><span class="btn-icon">▣</span> Make an Appointment</a>
+            {% if doctor.earliest_appointment %}<small>(Earliest: {{ doctor.earliest_appointment }})</small>{% endif %}
+        </div>
+    </article>
+    {% empty %}
+    <div class="no-result">No doctor found. Try another search keyword.</div>
+    {% endfor %}
+</section>
+{% endblock %}

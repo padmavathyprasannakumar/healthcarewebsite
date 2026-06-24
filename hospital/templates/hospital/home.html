@@ -1,0 +1,200 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+{% block title %}Home - {{ site_setting.site_name|default:'Hospital' }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'hospital/css/home.css' %}?v=2026062304">{% endblock %}
+
+{% block content %}
+<section class="hero-carousel" data-carousel>
+    {% if banners %}
+        {% for banner in banners %}
+        <div class="hero-slide {% if banner.image %}has-image{% endif %} {% if forloop.first %}active{% endif %}">
+            {% if banner.image %}
+                <img src="{{ banner.image.url }}" alt="{{ banner.title }}">
+            {% else %}
+                <div class="hero-placeholder"></div>
+                <div class="hero-caption">
+                    <span class="eyebrow">Trusted hospital care</span>
+                    <h1>{{ banner.title }}</h1>
+                    <p>{{ banner.subtitle }}</p>
+                    <div class="hero-actions">
+                        {% if banner.button_text %}<a href="{{ banner.button_link }}" class="primary-btn">{{ banner.button_text }}</a>{% endif %}
+                        <a href="{% url 'specialists' %}" class="hero-secondary-btn">Find Specialists</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="hero-slide active">
+            <div class="hero-placeholder"></div>
+            <div class="hero-caption">
+                <span class="eyebrow">Trusted hospital care</span>
+                <h1>Welcome to Assunta</h1>
+                <p>Your trusted healthcare provider for appointments, consultations, prescriptions and specialist care.</p>
+                <div class="hero-actions">
+                    <a href="{% url 'appointment' %}" class="primary-btn">Book Appointment</a>
+                    <a href="{% url 'specialists' %}" class="hero-secondary-btn">Find Specialists</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <button class="carousel-btn prev" data-prev aria-label="Previous slide">‹</button>
+    <button class="carousel-btn next" data-next aria-label="Next slide">›</button>
+</section>
+
+<section class="quick-care-section">
+    <div class="quick-care-grid">
+        <article class="quick-care-card emergency">
+            <span class="quick-icon">♥</span>
+            <div>
+                <h3>Emergency Support</h3>
+                <p>{% if site_setting %}{{ site_setting.emergency_line }}{% else %}+603-7877 9999{% endif %}</p>
+            </div>
+        </article>
+        <a class="quick-care-card" href="{% url 'appointment' %}">
+            <span class="quick-icon">📅</span>
+            <div>
+                <h3>Book Appointment</h3>
+                <p>Choose a doctor and request a convenient time.</p>
+            </div>
+        </a>
+        <a class="quick-care-card" href="{% url 'consultation' %}">
+            <span class="quick-icon">💬</span>
+            <div>
+                <h3>Online Consultation</h3>
+                <p>Discuss health concerns securely from home.</p>
+            </div>
+        </a>
+    </div>
+</section>
+
+<section class="section light">
+    <div class="section-title">
+        <span class="section-kicker">Departments</span>
+        <h2>Key Specialities</h2>
+        <p>We offer a range of services in the following specialities.</p>
+    </div>
+    <div class="speciality-grid">
+        {% for speciality in specialities %}
+        <a class="speciality-card" href="{% url 'specialists' %}?speciality={{ speciality.id }}">
+            <div class="speciality-icon-wrap">
+                {% if speciality.icon %}
+                    <img src="{{ speciality.icon.url }}" alt="{{ speciality.name }} icon">
+                {% else %}
+                    <div class="icon-circle">{{ speciality.icon_emoji|default:'✚' }}</div>
+                {% endif %}
+            </div>
+            <h3>{{ speciality.name }}</h3>
+            {% if speciality.description %}<p>{{ speciality.description|truncatewords:12 }}</p>{% endif %}
+        </a>
+        {% empty %}
+        <p class="empty">Add specialities and speciality icon images from Admin Dashboard.</p>
+        {% endfor %}
+    </div>
+    <div class="center"><a href="{% url 'specialists' %}" class="text-link">View all specialities</a></div>
+</section>
+
+<section class="section">
+    <div class="section-title">
+        <span class="section-kicker">Why patients choose us</span>
+        <h2>Compassionate Care, Modern Facilities</h2>
+        <p>We are committed to providing quality healthcare services with advanced technology and expert staff.</p>
+    </div>
+    <div class="why-grid">
+        {% for item in why_choose %}
+        <div class="why-card">
+            <div class="why-icon">{{ item.icon_text }}</div>
+            <h3>{{ item.number }}</h3>
+            <p>{{ item.title }}</p>
+        </div>
+        {% empty %}
+        <p class="empty">Add why choose us items from Admin Dashboard.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section light">
+    <div class="section-title">
+        <span class="section-kicker">Medical experts</span>
+        <h2>Featured Doctors</h2>
+        <p>Meet some of our available specialists.</p>
+    </div>
+    <div class="doctor-mini-grid">
+        {% for doctor in featured_doctors %}
+        <div class="doctor-mini-card">
+            {% if doctor.profile_image %}<img src="{{ doctor.profile_image.url }}" alt="{{ doctor.name }}">{% else %}<div class="doctor-photo-fallback">Dr</div>{% endif %}
+            <h3>{{ doctor.name }}</h3>
+            <p>{{ doctor.speciality.name }}</p>
+            <a href="{{ doctor.get_absolute_url }}" class="outline-btn">View Profile</a>
+        </div>
+        {% empty %}
+        <p class="empty">Mark doctors as featured in Admin Dashboard.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section testimonial-section" id="testimonials">
+    <div class="section-title">
+        <span class="section-kicker">Patient voices</span>
+        <h2>Testimonials</h2>
+        <p>Real experiences shared by patients and families who trusted our care.</p>
+    </div>
+    <div class="testimonial-grid">
+        {% for testimonial in testimonials %}
+        <article class="testimonial-card">
+            <div class="quote-mark">“</div>
+            <div class="stars" aria-label="{{ testimonial.rating }} out of 5 stars">{{ testimonial.star_display }}</div>
+            <p class="testimonial-message">{{ testimonial.message }}</p>
+            <div class="testimonial-author">
+                {% if testimonial.patient_image %}
+                    <img src="{{ testimonial.patient_image.url }}" alt="{{ testimonial.patient_name }}">
+                {% else %}
+                    <div class="avatar-fallback">{{ testimonial.patient_name|first|upper }}</div>
+                {% endif %}
+                <div>
+                    <h3>{{ testimonial.patient_name }}</h3>
+                    <p>{{ testimonial.patient_role|default:'Patient' }}</p>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <p class="empty">Add active testimonials from Admin Dashboard.</p>
+        {% endfor %}
+    </div>
+    <div class="center testimonial-action">
+        <button type="button" class="primary-btn" data-testimonial-open>Share Your Experience</button>
+    </div>
+</section>
+
+<div class="testimonial-modal-backdrop" data-testimonial-modal aria-hidden="true">
+    <div class="testimonial-modal" role="dialog" aria-modal="true" aria-labelledby="testimonial-modal-title">
+        <button type="button" class="modal-close" data-testimonial-close aria-label="Close testimonial form">×</button>
+        <span class="section-kicker">Share your story</span>
+        <h2 id="testimonial-modal-title">Submit Your Experience</h2>
+        <p class="modal-subtitle">Your testimonial will be reviewed by the admin before it appears on the home page.</p>
+        <form action="{% url 'submit_testimonial' %}" method="post" enctype="multipart/form-data" class="testimonial-popup-form" novalidate>
+            {% csrf_token %}
+            {% for field in testimonial_form %}
+            <div class="field-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="green-btn modal-submit-btn">Submit Experience</button>
+        </form>
+    </div>
+</div>
+
+<section class="cta-section">
+    <span class="section-kicker light-text">Need help today?</span>
+    <h2>Need Medical Assistance?</h2>
+    <p>Book an appointment or request an online consultation from home.</p>
+    <div>
+        <a href="{% url 'appointment' %}" class="white-btn">Make Appointment</a>
+        <a href="{% url 'consultation' %}" class="white-outline-btn">Online Consultation</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'hospital/js/carousel.js' %}?v=2026062304"></script>{% endblock %}

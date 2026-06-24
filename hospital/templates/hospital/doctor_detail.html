@@ -1,0 +1,26 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+{% block title %}{{ doctor.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'hospital/css/detail.css' %}">{% endblock %}
+
+{% block content %}
+<section class="detail-wrap">
+    <div class="detail-card">
+        <div class="detail-img">
+            {% if doctor.profile_image %}<img src="{{ doctor.profile_image.url }}" alt="{{ doctor.name }}">{% else %}<div class="doctor-photo-fallback big">Doctor</div>{% endif %}
+        </div>
+        <div class="detail-info">
+            <h1>{{ doctor.name }}</h1>
+            <h3>{{ doctor.speciality.name }}</h3>
+            <p><strong>Degree:</strong> {{ doctor.degree }}</p>
+            {% if doctor.designation %}<p><strong>Designation:</strong> {{ doctor.designation }}</p>{% endif %}
+            {% if doctor.room_no %}<p><strong>Room:</strong> {{ doctor.room_no }}</p>{% endif %}
+            {% if doctor.phone %}<p><strong>Phone:</strong> {{ doctor.phone }}</p>{% endif %}
+            {% if doctor.email %}<p><strong>Email:</strong> {{ doctor.email }}</p>{% endif %}
+            {% if doctor.consultation_fee %}<p><strong>Consultation Fee:</strong> RM {{ doctor.consultation_fee }}</p>{% endif %}
+            {% if doctor.bio %}<p class="bio">{{ doctor.bio }}</p>{% endif %}
+            <a href="{% url 'doctor_appointment' doctor.id %}" class="appointment-btn">Make Appointment</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
