@@ -20,7 +20,6 @@ SECRET_KEY = os.getenv(
     "django-insecure-local-dev-only-change-this-key"
 )
 
-# Local default True, Render should use DEBUG=False
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = [
@@ -41,6 +40,7 @@ if EXTRA_ALLOWED_HOSTS:
         if host.strip()
     ]
 
+# CSRF
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
@@ -111,12 +111,13 @@ TEMPLATES = [
 ]
 
 # =========================================================
-# DATABASE
+# DATABASE (FIXED FOR RENDER POSTGRESQL)
 # =========================================================
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        default=os.getenv("DATABASE_URL"),
         conn_max_age=600,
+        ssl_require=not DEBUG
     )
 }
 
@@ -124,18 +125,10 @@ DATABASES = {
 # PASSWORD VALIDATION
 # =========================================================
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 # =========================================================
@@ -178,3 +171,21 @@ LOGOUT_REDIRECT_URL = "home"
 # DEFAULT PRIMARY KEY
 # =========================================================
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# =========================================================
+# AUTO SUPERUSER (FIX FOR RENDER LOGIN ISSUE)
+# =========================================================
+if os.getenv("DJANGO_SUPERUSER_USERNAME"):
+    try:
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+
+        if not User.objects.filter(username=os.getenv("DJANGO_SUPERUSER_USERNAME")).exists():
+            User.objects.create_superuser(
+                username=os.getenv("DJANGO_SUPERUSER_USERNAME"),
+                email=os.getenv("DJANGO_SUPERUSER_EMAIL"),
+                password=os.getenv("DJANGO_SUPERUSER_PASSWORD")
+            )
+    except Exception as e:
+        print("Superuser creation skipped:", e)
